@@ -7,44 +7,22 @@ const app = express()
 const {
     ReadlineParser
 } = require('@serialport/parser-readline')
+const cors = require('cors')
 const StringUtils = require("./utils/StringUtils")
+const Open = require("./controllers/open")
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+const corsConfig = {
+    credentials: true,
+    origin: true,
+}
+app.use(cors(corsConfig))
 app.listen(4000, () => {
     console.log(`Example app listening on port ${4000}`)
 })
-app.post('/open', async (req, res) => {
-    const {
-        hang,
-        cot,
-        tang
-    } = req.body;
-    let port = new SerialPort({
-        path: "COM5",
-        baudRate: 9600,
-    })
-    const parser = port.pipe(new ReadlineParser({
-        delimiter: '\r\n'
-    }))
-    function sendRes(msg) {
-        port.close();
-        res.json({
-            data: msg
-        })
-    }
-
-    function init() {
-        setTimeout(() => {
-            port.write(`/M/ULK/H${hang}/C${cot}/T${tang}`)
-            parser.on("data", (data) => {
-                sendRes(data)
-            })
-        }, 1000);
-    }
-    init()
-})
+app.post('/open',Open)
 app.post('/close', async (req, res) => {
     const {
         hang,
