@@ -1,21 +1,14 @@
-
 const {SerialPort} = require('serialport')
 const {ReadlineParser} = require('@serialport/parser-readline')
 const StringUtils = require("../utils/StringUtils")
 const config = require("../config")
-module.exports = function (req, res) {
-    const {
-        hang,
-        cot,
-        tang
-    } = req.body;
-    flag = false;
-
+module.exports  = function (req, res) {
     let port = new SerialPort(config)
+    let flag = false
     const parser = port.pipe(new ReadlineParser({
         delimiter: '\r\n'
     }))
-
+    
     function sendRes(msg) {
         port.close();
         res.json({
@@ -25,7 +18,7 @@ module.exports = function (req, res) {
 
     function init() {
         setTimeout(() => {
-            port.write(`/M/LOK/H${hang}/C${cot}/T${tang}`)
+            port.write(`/FCK`)
             parser.on("data", (data) => {
                 flag = true;
                 sendRes(data)
