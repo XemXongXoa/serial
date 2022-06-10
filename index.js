@@ -19,6 +19,10 @@ const corsConfig = {
     origin: true,
 }
 app.use(cors(corsConfig))
+app.use((req, res, next) => {
+    res.setHeader('Content-Type', 'application/json');
+    next();
+})
 app.listen(4000, () => {
     console.log(`Example app listening on port ${4000}`)
 })

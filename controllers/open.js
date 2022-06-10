@@ -4,6 +4,7 @@ const {ReadlineParser} = require('@serialport/parser-readline')
 const StringUtils = require("../utils/StringUtils")
 const config = require("../config")
 module.exports = function (req, res) {
+  try{
     const {
         hang,
         cot,
@@ -38,4 +39,11 @@ module.exports = function (req, res) {
         }, 30000)
     }
     init()
+  }
+  catch(e){
+    console.log(e)
+    res.json({
+        data: "error"
+    })
+  }
 }
