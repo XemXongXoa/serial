@@ -23,7 +23,8 @@ module.exports  = function (req, res) {
         }
         function init() {
             setTimeout(() => {
-                port.write(`/M/ULK/H${hang}/C${cot}/T${tang}`)
+                // port.write(`/M/ULK/H${hang}/C${cot}/T${tang}`)
+                port.write(`/M/ULK/H0/C0T0`)
                 parser.on("data", (data) => {
                     flag = true;
                     sendRes(data)
