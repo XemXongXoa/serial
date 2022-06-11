@@ -3,7 +3,7 @@ const {SerialPort} = require('serialport')
 const {ReadlineParser} = require('@serialport/parser-readline')
 const StringUtils = require("../utils/StringUtils")
 const config = require("../config")
-module.exports = function (req, res) {
+module.exports = async function (req, res) {
   try{
     const {
         hang,
@@ -17,25 +17,34 @@ module.exports = function (req, res) {
         delimiter: '\r\n'
     }))
 
-    function sendRes(msg) {
-        port.close();
-        res.json({
-            data: msg
-        })
+    async function sendRes(msg) {
+        try{
+            port.close(async ()=>{
+                await res.json({
+                    data: msg
+                })
+            });
+        }
+        catch(e){
+            await res.json({
+                data: msg
+            })
+        }
+        
     }
 
     function init() {
         setTimeout(() => {
             // port.write(`/M/LOK/H${hang}/C${cot}/T${tang}`)
             port.write(`/M/LOK/H0/C0/T0`)
-            parser.on("data", (data) => {
+            parser.on("data",async (data) => {
                 flag = true;
-                sendRes(data)
+                await sendRes(data)
             })
         }, 1000);
-        setTimeout(() => {
+        setTimeout(async () => {
             if (!flag) {
-                sendRes("timeout")
+                await sendRes("timeout")
             }
         }, 30000)
     }
@@ -43,8 +52,6 @@ module.exports = function (req, res) {
   }
   catch(e){
     console.log(e)
-    res.json({
-        data: "error"
-    })
+    throw e
   }
 }
