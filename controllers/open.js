@@ -38,8 +38,10 @@ module.exports = async function (req, res) {
             // port.write(`/M/LOK/H${hang}/C${cot}/T${tang}`)
             port.write(`/M/LOK/H0/C0/T0`)
             parser.on("data",async (data) => {
-                flag = true;
-                await sendRes(data)
+                if(data ==="/M/CPL"){
+                    flag = true;
+                    await sendRes(data)
+                }
             })
         }, 1000);
         setTimeout(async () => {

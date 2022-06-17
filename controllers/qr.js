@@ -9,6 +9,7 @@ module.exports  = function (req, res) {
     }))
     let flag = false
     function sendRes(msg) {
+        console.log(msg.codePointAt(0))
         port.close();
         let data = msg.replace("/RQR/", "").replace("/CPL", "")
         res.json({
@@ -16,12 +17,24 @@ module.exports  = function (req, res) {
         })
     }
     function init() {
+        let inx = 0;
         setTimeout(() => {
-            port.write(`/BQR`)
-            parser.on("data", (data) => {
-                flag = true
-                sendRes(data)
-            })
+            setTimeout(() => {
+                port.write(`/BQR`)
+                setTimeout(() => {
+                    port.write(`/BQR`)
+                    parser.on("data", (data) => {
+                        console.log("data => " +inx+" => "  + data);
+                        
+                        if( inx ==1 )
+                        {
+                            flag = true;
+                            sendRes(data)
+                        }
+                        inx++;
+                    })
+                },1000)
+            },1000)
         }, 1000);
         setTimeout(() => {
             if (!flag) {
